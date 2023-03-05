@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { JocComponent } from './projecte/components/joc/joc.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,

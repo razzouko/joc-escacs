@@ -1,20 +1,11 @@
 table,tr,td{
-    border: 1px solid black;
     border-collapse: collapse;
 }
 
-#taulell1 td{
-    height: 40px;
-    width: 50px;
-    text-align: left;
+td{
+    text-align: center;
+    width: 40px;
 }
-
-#taulell2 td{
-    height: 40px;
-    width: 50px;
-    text-align: right;
-}
-
 
 .marroClar{
     background-color: cornsilk;
@@ -24,7 +15,13 @@ table,tr,td{
     background-color: burlywood;
 }
 
-#joc{
+#taulells{
     display: flex;
     justify-content: space-between;
+}
+
+#joc {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
