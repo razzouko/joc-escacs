@@ -1,0 +1,30 @@
+table,tr,td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#taulell1 td{
+    height: 40px;
+    width: 50px;
+    text-align: left;
+}
+
+#taulell2 td{
+    height: 40px;
+    width: 50px;
+    text-align: right;
+}
+
+
+.marroClar{
+    background-color: cornsilk;
+}
+
+.marroFosc{
+    background-color: burlywood;
+}
+
+#joc{
+    display: flex;
+    justify-content: space-between;
+}

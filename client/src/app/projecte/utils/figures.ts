@@ -1,0 +1,20 @@
+export const FIGURES = [
+    {imatge_url : "white_rook.png" , fila: "1" , columna : "A"},
+    {imatge_url : "white_knight.png" , fila: "1" , columna : "B"},
+    {imatge_url : "white_bishop.png" , fila: "1" , columna : "C"},
+    {imatge_url : "white_queen.png" , fila: "1" , columna : "D"},
+    {imatge_url : "white_king.png" , fila: "1" , columna : "E"},
+    {imatge_url : "white_bishop.png" , fila: "1" , columna : "F"},
+    {imatge_url : "white_knight.png" , fila: "1" , columna : "G"},
+    {imatge_url : "white_rook.png" , fila: "1" , columna : "H"},
+    {imatge_url : "white_pawn.png" , fila: "2" , columna : "totes"},
+    {imatge_url : "black_pawn.png" , fila: "7" , columna : "totes"},
+    {imatge_url : "black_rook.png" , fila: "8" , columna: "A"},
+    {imatge_url : "black_knight.png" , fila: "8" , columna: "B"},
+    {imatge_url : "black_bishop.png" , fila: "8" , columna: "C"},
+    {imatge_url : "black_queen.png" , fila: "8" , columna: "D"},
+    {imatge_url : "black_king.png" , fila: "8" , columna: "E"},
+    {imatge_url : "black_bishop.png" , fila: "8" , columna: "F"},
+    {imatge_url : "black_knight.png" , fila: "8" , columna: "G"},
+    {imatge_url : "black_rook.png" , fila: "8" , columna: "H"}
+]
