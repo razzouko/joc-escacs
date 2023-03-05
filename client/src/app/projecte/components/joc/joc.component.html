@@ -6,17 +6,17 @@
 
     <h1>Joc</h1>
 
-
-
         <div id="taulells">
-            <table id="taulell1">
-                <tr *ngFor="let fila of this.taula1.getFiles() ; let i = index">
+            <table id="taulell1" cdkDropListGroup>
+                <tr cdkDropList 
+                    [cdkDropListData]="fila"
+                    (cdkDropListDropped)="drop($event)"  *ngFor="let fila of this.taula1.getFiles() ; let i = index">
                     <td *ngFor="let casella of fila.getCaselles() ; let j = index" [ngClass]="(casella.informativa)? '': casella.color ">
                         <div *ngIf="casella.informativa">
                             <p> {{casella.fila}} {{casella.columna}}</p>
                         </div>
 
-                        <div *ngIf="casella.figura">
+                        <div cdkDrag *ngIf="casella.figura">
                             <img src="{{this.baseHref}}assets/imatges/{{this.casella.figura}}" height="20px" width="20px">
                         </div>
                     </td>
@@ -28,7 +28,7 @@
 
             <table id="taulell2">
                 <tr *ngFor="let fila of this.taula2.getFiles() ; let i = index">
-                    <td *ngFor="let casella of fila.getCaselles() ; let j = index" [ngClass]="(casella.informativa)? '': casella.color ">
+                    <td cdkDrag cdkDrop *ngFor="let casella of fila.getCaselles() ; let j = index" [ngClass]="(casella.informativa)? '': casella.color ">
                         <div *ngIf="casella.informativa">
                             <p> {{casella.fila}} {{casella.columna}}</p>
                         </div>

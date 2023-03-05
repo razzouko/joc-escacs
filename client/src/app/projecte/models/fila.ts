@@ -82,7 +82,6 @@ export class Fila {
 
         })
 
-        console.log(this.caselles)
     }
 
 

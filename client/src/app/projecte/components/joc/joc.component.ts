@@ -1,6 +1,10 @@
 import { Inject ,Component, OnInit } from '@angular/core';
 import { Taula } from '../../models/taula';
+
+import { CdkDropList, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { APP_BASE_HREF } from '@angular/common';
+import { Fila } from '../../models/fila';
+import { Casella } from '../../models/casella';
 
 @Component({
   selector: 'app-joc',
@@ -18,9 +22,11 @@ export class JocComponent implements OnInit {
     this.taula1 = new Taula(true);
     this.taula2 = new Taula(false);
     
-    console.log(this.taula1)
-    console.log(this.taula2)
-    
+  
+  }
+
+  drop(event: CdkDragDrop<Fila>) {
+    console.log(event)
   }
 
 }
