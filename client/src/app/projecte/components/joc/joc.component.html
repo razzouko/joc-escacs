@@ -1,23 +1,21 @@
 
-
-
-
 <div id="joc">
-
     <h1>Joc</h1>
-
         <div id="taulells">
-            <table id="taulell1" cdkDropListGroup>
-                <tr cdkDropList 
-                    [cdkDropListData]="fila"
-                    (cdkDropListDropped)="drop($event)"  *ngFor="let fila of this.taula1.getFiles() ; let i = index">
-                    <td *ngFor="let casella of fila.getCaselles() ; let j = index" [ngClass]="(casella.informativa)? '': casella.color ">
+            <table id="taulell1" cdkDropListGroup
+            >
+                <tr *ngFor="let fila of this.taula1.getFiles() ; let i = index">
+                    <td cdkDropList 
+                    [cdkDropListData]="casella"
+                    (cdkDropListDropped)="dropTaulell1($event)"
+                     
+                    *ngFor="let casella of fila.getCaselles() ; let j = index" [ngClass]="(casella.informativa)? '': casella.color ">
                         <div *ngIf="casella.informativa">
                             <p> {{casella.fila}} {{casella.columna}}</p>
                         </div>
 
-                        <div cdkDrag *ngIf="casella.figura">
-                            <img src="{{this.baseHref}}assets/imatges/{{this.casella.figura}}" height="20px" width="20px">
+                        <div cdkDrag [cdkDragPreviewContainer]="false" *ngIf="casella.figura">
+                            <img src="{{this.ruta}}{{this.casella.figura}}" height="20px" width="20px">
                         </div>
                     </td>
                 </tr>
