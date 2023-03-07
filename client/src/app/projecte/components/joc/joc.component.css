@@ -17,7 +17,11 @@ td{
 
 #taulells{
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+}
+
+#t1{
+    margin-right: 20px;
 }
 
 #joc {
@@ -28,4 +32,12 @@ td{
 
 img:not([src]){
     opacity : 0;
+}
+
+.cementiri{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: 40px;
+    border: 1px solid black;
 }

@@ -1,8 +1,7 @@
-import { Inject ,Component, OnInit } from '@angular/core';
+import { Inject, Component, OnInit } from '@angular/core';
 import { Taula } from '../../models/taula';
 
 import { APP_BASE_HREF } from '@angular/common';
-import { Casella } from '../../models/casella';
 
 
 @Component({
@@ -12,65 +11,110 @@ import { Casella } from '../../models/casella';
 })
 export class JocComponent implements OnInit {
 
-  taula1! : Taula;
-  taula2! : Taula;
-  ruta! : string;
+  taula1!: Taula;
+  taula2!: Taula;
+  ruta!: string;
   constructor(@Inject(APP_BASE_HREF) public baseHref: string) { }
 
   ngOnInit(): void {
     this.taula1 = new Taula(true);
     this.taula2 = new Taula(false);
     this.ruta = this.baseHref + "assets/imatges/";
+
   }
 
-  drag(event: any , casella : any){
+  drag(event: any, casella: any, taulellOrigen: string) {
     event.dataTransfer.setData("figuraOrigen", casella.figura);
-    event.dataTransfer.setData("filaColumna", casella.fila + casella.columna);
+    event.dataTransfer.setData("filaColumnaOrigen", casella.fila + casella.columna);
+    event.dataTransfer.setData("taulellOrigen", taulellOrigen);
+
   }
 
-  dragOver(event : any){
+  dragOver(event: any) {
     event.preventDefault();
   }
-  
-  drop(event : any , casella : any){
-    
+
+  drop(event: any, casella: any, taulellDesti: string) {
+
+    let tOrigen = event.dataTransfer.getData("taulellOrigen");
+    let figuraOrigen = event.dataTransfer.getData("figuraOrigen");
+    if (tOrigen == taulellDesti) {
+
+      if (!casella.figura) {
+        //casella buida
+        let filaColumna = event.dataTransfer.getData("filaColumnaOrigen");
+        let origen = {
+          fila: filaColumna.substring(0, 1),
+          columna: filaColumna.substring(1, 2)
+        }
+        let desti = {
+          fila: casella.fila,
+          columna: casella.columna
+        }
+        this.moureFigura(tOrigen, figuraOrigen, origen, desti, false);
+      } else if(casella.figura.substring(0,5) != figuraOrigen.substring(0,5)){
+        //casella ocupada
+        let figuraOrigen = event.dataTransfer.getData("figuraOrigen");
+        let posicioOrigen = event.dataTransfer.getData("filaColumnaOrigen");
+        let origen = {
+          fila: posicioOrigen.substring(0, 1),
+          columna: posicioOrigen.substring(1, 2),
+          figura: figuraOrigen
+        }
+        let desti = {
+          fila: casella.fila,
+          columna: casella.columna,
+          figura: casella.figura
+        }
+        this.matarFigura(tOrigen, origen, desti);
+      }
+    }
+
   }
 
-  
 
-  moureFigura( taulell : string , figura : string , origen : any , desti : any , mateixaFila : boolean){
+  matarFigura(taulell: string, origen: any, desti: any) {
 
-      if(taulell == "taulell1"){
-        let files = this.taula1.getFiles();
-        files.forEach(fila =>{
-          // si troba una fila relacionada amb l'origen o el desti
-            if(fila.numeroFila == parseInt(origen.fila) || fila.numeroFila == parseInt(desti.fila) ){
-              let caselles = fila.getCaselles();
-              caselles.forEach(casella => {
+    let taula = (taulell == "t1") ? this.taula1 : this.taula2;
 
-                  if(mateixaFila){
-                    if(casella.columna == origen.columna){
-                      casella.figura = '';
-                    }
+    taula.getFiles().forEach(fila => {
+      if (fila.numeroFila == parseInt(desti.fila) || fila.numeroFila == parseInt(origen.fila)) {
+        let caselles = fila.getCaselles();
+        caselles.forEach(casella => {
+          if (casella.columna == desti.columna && casella.fila == desti.fila) {
+            casella.figura = origen.figura;
+          }
 
-                    if(casella.columna == desti.columna){
-                      casella.figura = figura;
-                    }
-                  }else{
-
-                    if(casella.columna == origen.columna && casella.fila == origen.fila){
-                      casella.figura = '';
-                    }
-
-                    if(casella.columna == desti.columna && casella.fila == desti.fila){
-                      casella.figura = figura;
-                    }
-                  }
-              });
-          
-            }
-        })
+          if(casella.columna == origen.columna && casella.fila == origen.fila){
+              casella.figura = '';
+          }
+        });
       }
+    });
+    // falta fer comprovacions
+    (desti.figura.substring(0,5) == "white") ? taula.matarFigura('white' , desti.figura) : taula.matarFigura('black' , desti.figura);
+  }
+
+
+  moureFigura(taulell: string, figura: string, origen: any, desti: any, mateixaFila: boolean) {
+    let files = (taulell == "t1") ? this.taula1.getFiles() : this.taula2.getFiles();
+
+    files.forEach(fila => {
+      // si troba una fila relacionada amb l'origen o el desti
+      if (fila.numeroFila == parseInt(origen.fila) || fila.numeroFila == parseInt(desti.fila)) {
+        let caselles = fila.getCaselles();
+        caselles.forEach(casella => {
+          if (casella.columna == origen.columna && casella.fila == origen.fila) {
+            casella.figura = '';
+          }
+          if (casella.columna == desti.columna && casella.fila == desti.fila) {
+            casella.figura = figura;
+          }
+        });
+
+      }
+    })
+
 
   }
 }

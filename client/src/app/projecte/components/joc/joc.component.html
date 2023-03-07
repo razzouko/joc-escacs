@@ -1,40 +1,53 @@
 <div id="joc">
     <h1>Joc</h1>
     <div id="taulells">
-        <table id="taulell1">
-            <tr *ngFor="let fila of this.taula1.getFiles() ; let i = index">
-                <td (dragover)="dragOver($event)" (drop)="drop($event , casella)" 
-                *ngFor="let casella of fila.getCaselles() ; let j = index"
-                    [ngClass]="(casella.informativa)? '': casella.color ">
-                    <div *ngIf="casella.informativa">
-                        <p> {{casella.fila}} {{casella.columna}}</p>
-                    </div>
 
-                  
-                    <img [id]="casella.fila + casella.columna" (dragover)="dragOver($event)" (drop)="drop($event , casella)" (dragstart)="drag($event , casella)"
-                        [name]="casella.fila + casella.columna" draggable="true" class="figura" *ngIf="casella.figura"
-                        src="{{this.ruta}}{{this.casella.figura}}" width="30px"> 
-                </td>
-            </tr>
-        </table>
+        <div id="t1">
+            <div class="cementiri">
+                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('black')">
+            </div>
 
-        <br>
-        <br>
+            <table>
+                <tr *ngFor="let fila of this.taula1.getFiles() ; let i = index">
+                    <td (dragover)="dragOver($event)" (drop)="drop($event , casella , 't1')"
+                        *ngFor="let casella of fila.getCaselles() ; let j = index"
+                        [ngClass]="(casella.informativa)? '': casella.color ">
+                        <div *ngIf="casella.informativa">
+                            <p> {{casella.fila}} {{casella.columna}}</p>
+                        </div>
 
-        <table id="taulell2">
-            <tr *ngFor="let fila of this.taula2.getFiles() ; let i = index">
-                <td cdkDrag cdkDrop *ngFor="let casella of fila.getCaselles() ; let j = index"
-                    [ngClass]="(casella.informativa)? '': casella.color ">
-                    <div *ngIf="casella.informativa">
-                        <p> {{casella.fila}} {{casella.columna}}</p>
-                    </div>
 
-                    <div *ngIf="casella.figura">
-                        <img src="{{this.baseHref}}assets/imatges/{{this.casella.figura}}" height="20px" width="20px">
-                    </div>
+                        <img (dragstart)="drag($event , casella , 't1')" draggable="true" *ngIf="casella.figura"
+                            src="{{this.ruta}}{{this.casella.figura}}" width="30px">
+                    </td>
+                </tr>
+            </table>
+            <div class="cementiri">
+                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('white')">
+            </div>
+        </div>
+        
 
-                </td>
-            </tr>
-        </table>
+        <div id="t2">
+            <div class="cementiri">
+                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('white')">
+            </div>
+            <table>
+                <tr *ngFor="let fila of this.taula2.getFiles() ; let i = index">
+                    <td (dragover)="dragOver($event)" (drop)="drop($event , casella , 't2')"
+                        *ngFor="let casella of fila.getCaselles() ; let j = index"
+                        [ngClass]="(casella.informativa)? '': casella.color ">
+                        <div *ngIf="casella.informativa">
+                            <p> {{casella.fila}} {{casella.columna}}</p>
+                        </div>
+                        <img (dragstart)="drag($event , casella , 't2')" draggable="true" *ngIf="casella.figura"
+                            src="{{this.ruta}}{{this.casella.figura}}" width="30px">
+                    </td>
+                </tr>
+            </table>
+            <div class="cementiri">
+                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('black')">
+            </div>
+        </div>
     </div>
 </div>

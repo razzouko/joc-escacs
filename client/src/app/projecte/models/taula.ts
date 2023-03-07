@@ -2,47 +2,65 @@ import { Fila } from "./fila";
 
 export class Taula {
 
-    filesTaula! : Array<Fila>;
-    figuresBlanquesMortes : Array<string> = [];
-    figuresNegresMortes : Array<string> = [];
-   
-    constructor( taulellPrincipal? : boolean ){
+    filesTaula!: Array<Fila>;
+    figuresBlanquesMortes: Array<string> = [];
+    figuresNegresMortes: Array<string> = [];
+
+    constructor(taulellPrincipal?: boolean) {
         this.filesTaula = [];
         this.generarFilesTaula();
-        if(taulellPrincipal){
+        if (taulellPrincipal) {
             this.taulellPrincipal();
-        }else{
+        } else {
             this.taulellSecundari();
         }
         this.iniciarTaulell();
     }
 
-    generarFilesTaula(){
+    generarFilesTaula() {
         for (let i = 0; i < 10; i++) {
-              if(i == 0 || i == 9){
-                this.filesTaula.push(new Fila(i , true))
-              }else{
-              this.filesTaula.push(new Fila(i , false))
-              }
+            if (i == 0 || i == 9) {
+                this.filesTaula.push(new Fila(i, true))
+            } else {
+                this.filesTaula.push(new Fila(i, false))
+            }
         }
     }
 
-    getFiles(){
+    getFiles() {
         return this.filesTaula;
     }
 
-    taulellPrincipal(){
-        this.filesTaula.forEach(fila =>{
+    getFiguresMortes(color: string) {
+        if (color == 'white') {
+            return this.figuresBlanquesMortes;
+        }
+        if (color =='black') {
+            return this.figuresBlanquesMortes;
+        }
+        return;
+    }
+
+    matarFigura(color: string, figura: string) {
+        if (color == 'white') {
+            this.figuresBlanquesMortes.push(figura);
+        }else if(color == 'black'){
+            this.figuresNegresMortes.push(figura);
+        }
+    }
+
+    taulellPrincipal() {
+        this.filesTaula.forEach(fila => {
             fila.girar();
         })
     }
 
-    taulellSecundari(){
+    taulellSecundari() {
         this.filesTaula.reverse();
     }
 
-    iniciarTaulell(){
-        this.filesTaula.forEach(fila =>{
+    iniciarTaulell() {
+        this.filesTaula.forEach(fila => {
             fila.colorcarFigures();
         })
     }
