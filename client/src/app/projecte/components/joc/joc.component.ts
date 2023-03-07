@@ -1,10 +1,9 @@
 import { Inject ,Component, OnInit } from '@angular/core';
 import { Taula } from '../../models/taula';
 
-import { CdkDropList, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { APP_BASE_HREF } from '@angular/common';
-import { Fila } from '../../models/fila';
 import { Casella } from '../../models/casella';
+
 
 @Component({
   selector: 'app-joc',
@@ -22,27 +21,22 @@ export class JocComponent implements OnInit {
     this.taula1 = new Taula(true);
     this.taula2 = new Taula(false);
     this.ruta = this.baseHref + "assets/imatges/";
+  }
+
+  drag(event: any , casella : any){
+    event.dataTransfer.setData("figuraOrigen", casella.figura);
+    event.dataTransfer.setData("filaColumna", casella.fila + casella.columna);
+  }
+
+  dragOver(event : any){
+    event.preventDefault();
+  }
   
-  }
-
-  dropTaulell1(event: CdkDragDrop<any>) {
+  drop(event : any , casella : any){
     
-    let casellaOrigen = event.previousContainer.data;
-    let casellaDesti = event.container.data;
-
-    if(casellaDesti.informativa == true){
-      return;
-    }
-
-    if(casellaDesti.figura == ''){
-        let dadesOrigen = { fila : casellaOrigen.fila , columna : casellaOrigen.columna }
-        let dadesDesti = { fila : casellaDesti.fila , columna : casellaDesti.columna }
-        let mateixaFila = (casellaOrigen.fila == casellaDesti.fila) ? true: false;
-        this.moureFigura( "taulell1", casellaOrigen.figura , dadesOrigen , dadesDesti , mateixaFila);
-    }
-
   }
 
+  
 
   moureFigura( taulell : string , figura : string , origen : any , desti : any , mateixaFila : boolean){
 
