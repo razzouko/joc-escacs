@@ -5,18 +5,20 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { JocComponent } from './projecte/components/joc/joc.component';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { LoginEquipsComponent } from './projecte/components/login-equips/login-equips.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    JocComponent
+    JocComponent,
+    LoginEquipsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    DragDropModule
+    ReactiveFormsModule
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]

@@ -36,7 +36,7 @@ export class Taula {
             return this.figuresBlanquesMortes;
         }
         if (color =='black') {
-            return this.figuresBlanquesMortes;
+            return this.figuresNegresMortes;
         }
         return;
     }

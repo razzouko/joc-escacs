@@ -4,7 +4,7 @@
 
         <div id="t1">
             <div class="cementiri">
-                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('black')">
+                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('black')" src="{{this.ruta}}{{figuraMorta}}">
             </div>
 
             <table>
@@ -23,14 +23,14 @@
                 </tr>
             </table>
             <div class="cementiri">
-                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('white')">
+                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('white')"  src="{{this.ruta}}{{figuraMorta}}">
             </div>
         </div>
         
 
         <div id="t2">
             <div class="cementiri">
-                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('white')">
+                <img *ngFor="let figuraMorta of this.taula2.getFiguresMortes('white')"  src="{{this.ruta}}{{figuraMorta}}">
             </div>
             <table>
                 <tr *ngFor="let fila of this.taula2.getFiles() ; let i = index">
@@ -41,12 +41,12 @@
                             <p> {{casella.fila}} {{casella.columna}}</p>
                         </div>
                         <img (dragstart)="drag($event , casella , 't2')" draggable="true" *ngIf="casella.figura"
-                            src="{{this.ruta}}{{this.casella.figura}}" width="30px">
+                            src="{{this.ruta}}{{this.casella.figura}}">
                     </td>
                 </tr>
             </table>
             <div class="cementiri">
-                <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('black')">
+                <img *ngFor="let figuraMorta of this.taula2.getFiguresMortes('black')"  src="{{this.ruta}}{{figuraMorta}}">
             </div>
         </div>
     </div>

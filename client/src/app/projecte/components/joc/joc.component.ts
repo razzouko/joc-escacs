@@ -38,34 +38,25 @@ export class JocComponent implements OnInit {
 
     let tOrigen = event.dataTransfer.getData("taulellOrigen");
     let figuraOrigen = event.dataTransfer.getData("figuraOrigen");
-    if (tOrigen == taulellDesti) {
+    let posicioOrigen = event.dataTransfer.getData("filaColumnaOrigen");
 
+    let origen = {
+      fila: posicioOrigen.substring(0, 1),
+      columna: posicioOrigen.substring(1, 2),
+      figura: figuraOrigen
+    }
+    let desti = {
+      fila: casella.fila,
+      columna: casella.columna,
+      figura: casella.figura
+    }
+
+    if (tOrigen == taulellDesti) {
       if (!casella.figura) {
         //casella buida
-        let filaColumna = event.dataTransfer.getData("filaColumnaOrigen");
-        let origen = {
-          fila: filaColumna.substring(0, 1),
-          columna: filaColumna.substring(1, 2)
-        }
-        let desti = {
-          fila: casella.fila,
-          columna: casella.columna
-        }
-        this.moureFigura(tOrigen, figuraOrigen, origen, desti, false);
+        this.moureFigura(tOrigen, figuraOrigen, origen, desti);
       } else if(casella.figura.substring(0,5) != figuraOrigen.substring(0,5)){
         //casella ocupada
-        let figuraOrigen = event.dataTransfer.getData("figuraOrigen");
-        let posicioOrigen = event.dataTransfer.getData("filaColumnaOrigen");
-        let origen = {
-          fila: posicioOrigen.substring(0, 1),
-          columna: posicioOrigen.substring(1, 2),
-          figura: figuraOrigen
-        }
-        let desti = {
-          fila: casella.fila,
-          columna: casella.columna,
-          figura: casella.figura
-        }
         this.matarFigura(tOrigen, origen, desti);
       }
     }
@@ -91,12 +82,12 @@ export class JocComponent implements OnInit {
         });
       }
     });
-    // falta fer comprovacions
+
     (desti.figura.substring(0,5) == "white") ? taula.matarFigura('white' , desti.figura) : taula.matarFigura('black' , desti.figura);
   }
 
 
-  moureFigura(taulell: string, figura: string, origen: any, desti: any, mateixaFila: boolean) {
+  moureFigura(taulell: string, figura: string, origen: any, desti: any) {
     let files = (taulell == "t1") ? this.taula1.getFiles() : this.taula2.getFiles();
 
     files.forEach(fila => {
@@ -111,10 +102,7 @@ export class JocComponent implements OnInit {
             casella.figura = figura;
           }
         });
-
       }
     })
-
-
   }
 }

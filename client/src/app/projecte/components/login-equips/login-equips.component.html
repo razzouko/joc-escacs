@@ -1,0 +1,11 @@
+
+<h1>Entrar equips</h1>
+
+<form [formGroup]="formulari">
+
+    <label>Nom equip <input formControlName = "nomEquip"></label>
+    <label>Jugador 1 <input formControlName = "jugador1"></label>
+    <label>Jugador 2 <input formControlName = "jugador2"></label>
+
+    <button (click)="this.guardarDadesEquip()"> Entrar equip </button>
+</form>
