@@ -7,6 +7,9 @@ import { AppComponent } from './app.component';
 import { JocComponent } from './projecte/components/joc/joc.component';
 import { LoginEquipsComponent } from './projecte/components/login-equips/login-equips.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+let config : SocketIoConfig = {url: 'http://localhost:4000', options: {}};
 
 
 @NgModule({
@@ -18,7 +21,8 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [{provide: APP_BASE_HREF, useValue: '/'}],
   bootstrap: [AppComponent]
