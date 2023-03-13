@@ -2,12 +2,15 @@ import { Fila } from "./fila";
 
 export class Taula {
 
-    filesTaula!: Array<Fila>;
-    figuresBlanquesMortes: Array<string> = [];
-    figuresNegresMortes: Array<string> = [];
+    private filesTaula!: Array<Fila>;
+    private figuresBlanquesMortes: Array<string> = [];
+    private figuresNegresMortes: Array<string> = [];
+    private torn : string = "white";
+    private nomTaula! : string;
 
-    constructor(taulellPrincipal?: boolean) {
+    constructor( nomTaula : string , taulellPrincipal?: boolean ) {
         this.filesTaula = [];
+        this.nomTaula = nomTaula;
         this.generarFilesTaula();
         if (taulellPrincipal) {
             this.taulellPrincipal();
@@ -29,6 +32,21 @@ export class Taula {
 
     getFiles() {
         return this.filesTaula;
+    }
+
+    getNomTaula(){
+        return this.nomTaula;
+    }
+
+    getTorn(){
+        return this.torn;
+    }
+
+    canviarTorn(){
+        if(this.torn == 'white')
+            this.torn = 'black'
+        else 
+            this.torn = 'white';
     }
 
     getFiguresMortes(color: string) {

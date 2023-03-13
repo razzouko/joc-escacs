@@ -3,10 +3,10 @@ import { FIGURES } from "../utils/figures";
 
 export class Fila {
 
-    caselles: Array<Casella> = [];
+    private caselles: Array<Casella> = [];
     numeroFila!: number;
-    columnes!: Array<string>;
-    informativa!: boolean;
+    private columnes!: Array<string>;
+    private informativa!: boolean;
 
     constructor(numeroFila: number, informativa: boolean) {
         this.numeroFila = numeroFila;

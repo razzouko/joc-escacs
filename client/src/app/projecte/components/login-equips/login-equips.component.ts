@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { SocketService } from '../../services/socket.service';
 @Component({
   selector: 'app-login-equips',
   templateUrl: './login-equips.component.html',
@@ -10,13 +11,14 @@ export class LoginEquipsComponent {
   formulari!: FormGroup;
   numeroEquip = 1;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder , private socket : SocketService) {
 
     this.formulari = this.fb.group({
       nomEquip: ['', Validators.required],
       jugador1: ['', Validators.required],
       jugador2: ['', Validators.required]
     });
+
   }
 
   guardarDadesEquip() {
@@ -27,15 +29,15 @@ export class LoginEquipsComponent {
     if (this.formulari.status == 'VALID') {
       let equip = {
         nomEquip: this.formulari.value.nomEquip,
-        jugador1: this.formulari.value.jugador1,
-        jugador2: this.formulari.value.jugador2,
-        estat : 'esperant'
+        jugador1: {nom : this.formulari.value.jugador1.trim(),
+                   color : 'white'},
+        jugador2:  { nom : this.formulari.value.jugador2.trim(),
+                    color : 'black'},
       }
-      localStorage.setItem('equip' + this.numeroEquip, JSON.stringify(equip));
-      this.numeroEquip++;
+      this.socket.afegirEquip(equip)
       this.formulari.reset();
     }
   }
-  ngOnInit(): void {
-  }
+
+  ngOnInit(): void {}
 }
