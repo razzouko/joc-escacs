@@ -11,6 +11,7 @@ const io = require('socket.io')(server , {
 var equipAnterior = {};
 var equipLliure = false;
 var partides = [];
+jugadorsOnline = 0;
 
 server.listen(port , ()=>{
     console.log(`Escoltant al port ${port}`)
@@ -27,8 +28,13 @@ io.on("connection" , socket=>{
 
     socket.on("obtenir-jugador" , ()=>{
         let jugador = obtenirJugador();
-        socket.join(jugador.sala)
-        
+        socket.join(jugador.sala);
+        jugadorsOnline++;
+
+        if(jugadorsOnline % 4 == 0){
+           io.emit('jugar' , 'jugar ');
+        }
+        socket.emit('carregar-user' , jugador);
     })
 
     
@@ -47,7 +53,9 @@ io.on("connection" , socket=>{
                     jugador = {
                         sala : partida.sala,
                         taulell : partida.taulell,
-                        jugador : partida.jugador1
+                        jugador : partida.jugador1,
+                        contrincant : partida.jugador2,
+                        altrePartida : partida.altrePartida
                     };
                     jugadorDisponible = true; // acaba el bucle
                 }else if (partida.jugador2.lliure){
@@ -55,7 +63,9 @@ io.on("connection" , socket=>{
                     jugador = {
                         sala : partida.sala,
                         taulell : partida.taulell,
-                        jugador : partida.jugador2
+                        jugador : partida.jugador2,
+                        contrincant : partida.jugador1,
+                        altrePartida : partida.altrePartida
                     };
                     jugadorDisponible = true; //acaba el bucle
                 }
@@ -80,10 +90,12 @@ io.on("connection" , socket=>{
         }
     }
 
-    const crearPartida = equip =>{
+    const crearPartida = equipActual =>{
+
+        let salaId = getSalaId();
 
         let novaPartida1 = {
-                sala : getSalaId() , 
+                sala : salaId , 
                 taulell : "taulell1",
                 jugador1 : {
                         equip : equipAnterior.nomEquip,
@@ -92,16 +104,20 @@ io.on("connection" , socket=>{
                         lliure : true
                 },
                 jugador2 : {
-                    equip : equip.nomEquip,
-                    nom : equip.jugador2.nom,
-                    color : equip.jugador2.color,
+                    equip : equipActual.nomEquip,
+                    nom : equipActual.jugador2.nom,
+                    color : equipActual.jugador2.color,
                     lliure : true
                 },
-                assignada : false
+                assignada : false,
+                altrePartida : {
+                    jugador1 : {nom : equipAnterior.jugador2.nom , color : equipAnterior.jugador2.color },
+                    jugador2 : {nom : equipActual.jugador1.nom , color : equipActual.jugador1.color }
+                }
             }
             
         let novaPartida2 = {
-            sala : getSalaId(),
+            sala : salaId ,
             taulell : "taulell2",
             jugador1 : {
                     equip : equipAnterior.nomEquip,
@@ -110,12 +126,16 @@ io.on("connection" , socket=>{
                     lliure : true
             },
             jugador2 : {
-                equip : equip.nomEquip,
-                nom : equip.jugador1.nom,
-                color : equip.jugador1.color,
+                equip : equipActual.nomEquip,
+                nom : equipActual.jugador1.nom,
+                color : equipActual.jugador1.color,
                 lliure : true
             },
-            assignada : false
+            assignada : false,
+            altrePartida : {
+                jugador1 : {nom : equipAnterior.jugador1.nom , color : equipAnterior.jugador1.color },
+                jugador2 : {nom : equipActual.jugador2.nom , color : equipActual.jugador2.color }
+            }
         }
         
         partides.push(novaPartida1 , novaPartida2)

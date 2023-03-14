@@ -3,6 +3,8 @@ import { Taula } from '../../models/taula';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { SocketService } from '../../services/socket.service';
+import { Observable, Subscription } from 'rxjs';
+import { Jugador } from '../../models/jugador';
 
 
 @Component({
@@ -11,18 +13,39 @@ import { SocketService } from '../../services/socket.service';
   styleUrls: ['./joc.component.css']
 })
 export class JocComponent implements OnInit {
-
+  // flux de dades
+  dadesJugador! : Subscription;
+  // dades vista
   taula1!: Taula;
   taula2!: Taula;
   rutaImatges!: string;
-  taulaJugador: string = "taula1";
-  salaJugador! : string;
+  //dades partida jugador
+  taulellJugador!: string;
+  jugador! : Jugador;
+  iniciarNoms : boolean = false;
+  comensar : boolean = false;
+
+  //dades segona partida
+  dadesPartida2 : any;
   constructor(@Inject(APP_BASE_HREF) public baseHref: string , private socket : SocketService) { }
 
   ngOnInit(): void {
-    this.taula1 = new Taula("taula1", true);
-    this.taula2 = new Taula("taula2", false);
+    this.taula1 = new Taula("taulell1", true);
+    this.taula2 = new Taula("taulell2", false);
     this.rutaImatges = this.baseHref + "assets/imatges/"; // ruta de les imatges
+
+    this.socket.dadesJugador.subscribe(dades =>{
+      let jugador = dades.jugador;
+      this.jugador = new Jugador(jugador.nom , jugador.equip,
+         jugador.color , dades.sala , dades.contrincant);
+      this.iniciarNoms = true;
+    })
+
+    this.socket.jugar.subscribe(msg =>{
+        if(!this.comensar){
+          this.comensar = true;
+        }
+    })
   }
 
   jugar(){
@@ -42,7 +65,7 @@ export class JocComponent implements OnInit {
 
   drop(event: any, casella: any, taulellDesti: string) {
 
-    if (taulellDesti == this.taulaJugador) {
+    if (taulellDesti == this.taulellJugador) {
       let figuraOrigen = event.dataTransfer.getData("figuraOrigen");
 
       if (this.tornCorrecte(figuraOrigen.substring(0,5), taulellDesti)) {
@@ -93,7 +116,7 @@ export class JocComponent implements OnInit {
       }
     });
 
-    let taula = (taulell == "taula1") ? this.taula1 : this.taula2;
+    let taula = (taulell == "taulell1") ? this.taula1 : this.taula2;
     (desti.figura.substring(0, 5) == "white") ? taula.matarFigura('white', desti.figura) : taula.matarFigura('black', desti.figura);
   }
 
@@ -120,7 +143,7 @@ export class JocComponent implements OnInit {
   obtenirFiles(taulell: string) {
     let files = [];
 
-    if (taulell == "taula1") {
+    if (taulell == "taulell1") {
       this.taula1.canviarTorn();
       console.log(this.taula1.getTorn())
       return files = this.taula1.getFiles();
@@ -131,7 +154,7 @@ export class JocComponent implements OnInit {
   }
 
   tornCorrecte(colorMogut : string , taulell : string){
-      if(taulell == 'taula1')
+      if(taulell == 'taulell1')
         return (colorMogut == this.taula1.getTorn()) ? true : false ; 
       else
       return (colorMogut == this.taula2.getTorn()) ? true : false ; 

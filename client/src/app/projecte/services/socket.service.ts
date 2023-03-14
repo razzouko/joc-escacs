@@ -6,19 +6,10 @@ import { Socket } from 'ngx-socket-io';
 })
 export class SocketService {
 
-  constructor( private socket : Socket ) {
-      this.escoltarMissatges();
-   }
-
-  escoltarMissatges(){
-    this.escoltarDadesUser();
-  }
-
-  escoltarDadesUser(){
-    this.socket.on('carregar-user' , ()=>{
-      
-    })
-  }
+  dadesJugador = this.socket.fromEvent<any>('carregar-user');
+  jugar = this.socket.fromEvent<string>('jugar');
+  
+  constructor( private socket : Socket ) {}
 
   afegirEquip(equip : any){
     this.socket.emit('nou-equip' , equip);
