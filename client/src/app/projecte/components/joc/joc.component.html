@@ -2,12 +2,15 @@
     <h1>Joc</h1>
     <button (click)="this.jugar()"> jugar </button>
 
-    <h2 *ngIf="this.iniciarNoms">Navegador de - {{this.jugador.nom}} </h2>
+    <h2 *ngIf="this.navegadorReady" id="navegador-jugador">Navegdaor de - {{this.jugador.nom}}</h2>
 
     <div *ngIf="this.comensar">
 
         <div id="taulells">
             <div id="t1">
+
+                <h3> White {{this.t1white}} </h3>
+
                 <div class="cementiri">
                     <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('black')"
                         src="{{this.rutaImatges}}{{figuraMorta}}">
@@ -28,14 +31,21 @@
                         </td>
                     </tr>
                 </table>
+
+                
                 <div class="cementiri">
                     <img *ngFor="let figuraMorta of this.taula1.getFiguresMortes('white')"
-                        src="{{this.rutaImatges}}{{figuraMorta}}">
+                        src="{{this.rutaImatges}}{{figuraMorta}}">  
                 </div>
+
+                <h3> Black {{this.t1black}}</h3>
             </div>
 
 
             <div id="t2">
+
+                <h3> Black {{this.t2black}} </h3>
+
                 <div class="cementiri">
                     <img *ngFor="let figuraMorta of this.taula2.getFiguresMortes('white')"
                         src="{{this.rutaImatges}}{{figuraMorta}}">
@@ -57,6 +67,8 @@
                     <img *ngFor="let figuraMorta of this.taula2.getFiguresMortes('black')"
                         src="{{this.rutaImatges}}{{figuraMorta}}">
                 </div>
+
+                <h3> White {{this.t2white}} </h3>
             </div>
         </div>
     </div>

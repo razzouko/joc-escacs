@@ -28,13 +28,25 @@ io.on("connection" , socket=>{
 
     socket.on("obtenir-jugador" , ()=>{
         let jugador = obtenirJugador();
+
+        if(!jugador){
+            socket.emit('error-jugadors' , 'Alerta : No hi ha equips o jugadors suficients!!!!!')
+        }else{
+
         socket.join(jugador.sala);
         jugadorsOnline++;
+
+        socket.emit('carregar-user' , jugador);
 
         if(jugadorsOnline % 4 == 0){
            io.emit('jugar' , 'jugar ');
         }
-        socket.emit('carregar-user' , jugador);
+    }
+        
+    })
+
+    socket.on('moviment' , dadesMoviment =>{
+        io.to(dadesMoviment.sala).emit('moviment' , dadesMoviment);
     })
 
     
@@ -75,7 +87,9 @@ io.on("connection" , socket=>{
             }
             i++;
         }
-        console.log(partides)
+        if(!jugadorDisponible){
+            return false;
+        }
         return jugador;
     }
 
@@ -111,8 +125,9 @@ io.on("connection" , socket=>{
                 },
                 assignada : false,
                 altrePartida : {
-                    jugador1 : {nom : equipAnterior.jugador2.nom , color : equipAnterior.jugador2.color },
-                    jugador2 : {nom : equipActual.jugador1.nom , color : equipActual.jugador1.color }
+                    taulell : "taulell2",
+                    jugador1 : {nom : equipAnterior.jugador2.nom , color : equipAnterior.jugador2.color , nomEquip : equipAnterior.nomEquip },
+                    jugador2 : {nom : equipActual.jugador1.nom , color : equipActual.jugador1.color , nomEquip : equipActual.nomEquip }
                 }
             }
             
@@ -133,8 +148,9 @@ io.on("connection" , socket=>{
             },
             assignada : false,
             altrePartida : {
-                jugador1 : {nom : equipAnterior.jugador1.nom , color : equipAnterior.jugador1.color },
-                jugador2 : {nom : equipActual.jugador2.nom , color : equipActual.jugador2.color }
+                taulell : "taulell1",
+                jugador1 : {nom : equipAnterior.jugador1.nom , color : equipAnterior.jugador1.color , nomEquip : equipAnterior.nomEquip  },
+                jugador2 : {nom : equipActual.jugador2.nom , color : equipActual.jugador2.color , nomEquip : equipActual.nomEquip }
             }
         }
         

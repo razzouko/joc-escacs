@@ -7,11 +7,13 @@ export class Jugador {
     sala! : string | undefined;
     color! : string;
     equip! : string;
+    taulell! : string;
     
 
-    constructor(nom : string , equip : string , color : string, sala? : string ,  contrincant? : any){
+    constructor(nom : string , equip : string , color : string , taulell : string, sala? : string ,  contrincant? : any){
 
         this.nom = nom;
+        this.taulell = taulell;
         this.equip = equip;
         if(contrincant){
             this.contrincant = this.definirContrincant(contrincant);
@@ -22,16 +24,19 @@ export class Jugador {
     }
 
     definirContrincant(contrincant : any){
-        console.log(contrincant)
-        return new Jugador(contrincant.nom , contrincant.equip , contrincant.color)
+        return new Jugador(contrincant.nom , contrincant.equip , contrincant.color , this.taulell)
     }
 
     getContrincantNom() : string | undefined{
-        return this.contrincant?.nom
+        return  this.contrincant!.nom
     }
 
     getContrincantColor() : string | undefined{
-        return this.contrincant?.color
+        return this.contrincant!.color
+    }
+
+    getContrincantEquip() : string | undefined{
+        return this.contrincant!.equip;
     }
 
 }

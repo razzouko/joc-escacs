@@ -13,46 +13,104 @@ import { Jugador } from '../../models/jugador';
   styleUrls: ['./joc.component.css']
 })
 export class JocComponent implements OnInit {
-  // flux de dades
-  dadesJugador! : Subscription;
+
+  obj! : any;
+
   // dades vista
   taula1!: Taula;
   taula2!: Taula;
   rutaImatges!: string;
+
   //dades partida jugador
-  taulellJugador!: string;
-  jugador! : Jugador;
-  iniciarNoms : boolean = false;
-  comensar : boolean = false;
+  jugador!: Jugador;
+
+  // noms jugadors
+  t1white!: string;
+  t1black!: string;
+  t2white!: string;
+  t2black!: string;
+
+  // controlar events a l'html
+  navegadorReady: boolean = false;
+  comensar: boolean = false;
 
   //dades segona partida
-  dadesPartida2 : any;
-  constructor(@Inject(APP_BASE_HREF) public baseHref: string , private socket : SocketService) { }
+  dadesTaulell2: any;
+  constructor(@Inject(APP_BASE_HREF) public baseHref: string, private socket: SocketService) { }
 
   ngOnInit(): void {
     this.taula1 = new Taula("taulell1", true);
     this.taula2 = new Taula("taulell2", false);
     this.rutaImatges = this.baseHref + "assets/imatges/"; // ruta de les imatges
 
-    this.socket.dadesJugador.subscribe(dades =>{
+    this.carregarSubscribes()
+  }
+
+  carregarSubscribes() {
+    // subscribe a les dades del jugador
+    this.socket.dadesJugador.subscribe(dades => {
       let jugador = dades.jugador;
-      this.jugador = new Jugador(jugador.nom , jugador.equip,
-         jugador.color , dades.sala , dades.contrincant);
-      this.iniciarNoms = true;
+      this.jugador = new Jugador(jugador.nom, jugador.equip,
+        jugador.color, dades.taulell, dades.sala, dades.contrincant);
+
+      this.dadesTaulell2 = dades.altrePartida;
+      this.navegadorReady = true;
+    })
+    // subscribe al comensament del joc
+    this.socket.jugar.subscribe(msg => {
+      if (!this.comensar) {
+        this.comensar = true;
+        this.iniciarNoms();
+      }
+    })
+    // subscribe al moviment
+    this.socket.moviment.subscribe(moviment => {
+
+      if (moviment.accio == "moure" && moviment.jugador != this.jugador.nom) {
+        this.moureFigura(moviment.taulell, moviment.origen, moviment.desti, true)
+      }
+
+      if (moviment.accio == "matar" && moviment.jugador != this.jugador.nom) {
+        this.matarFigura(moviment.taulell, moviment.origen, moviment.desti, true)
+      }
+
     })
 
-    this.socket.jugar.subscribe(msg =>{
-        if(!this.comensar){
-          this.comensar = true;
-        }
+    // subscribe a l'error de jugadors
+    this.socket.errorJugadors.subscribe(msg => {
+      alert(msg);
     })
   }
 
-  jugar(){
+  jugar() {
     this.socket.obtenirJugador();
   }
 
+  iniciarNoms() {
+
+    let jugadorPrincipal = this.jugador.nom + " - " + this.jugador.equip;
+    let contrincant = this.jugador.getContrincantNom() + " - " + this.jugador.getContrincantEquip();
+    let partida2Jugador1 = this.dadesTaulell2.jugador1.nom + ' - ' + this.dadesTaulell2.jugador1.nomEquip;
+    let partida2Jugador2 = this.dadesTaulell2.jugador2.nom + ' - ' + this.dadesTaulell2.jugador2.nomEquip;
+
+
+    if (this.jugador.taulell == "taulell1") {
+      this.t1white = (this.jugador.color == 'white') ? jugadorPrincipal : contrincant;
+      this.t1black = (this.jugador.color == 'black') ? jugadorPrincipal : contrincant;
+      this.t2white = (this.dadesTaulell2.jugador1.color == 'white') ? partida2Jugador1 : partida2Jugador2;
+      this.t2black = (this.dadesTaulell2.jugador1.color == 'black') ? partida2Jugador1 : partida2Jugador2;
+    } else {
+      this.t2white = (this.jugador.color == 'white') ? jugadorPrincipal : contrincant;
+      this.t2black = (this.jugador.color == 'black') ? jugadorPrincipal : contrincant;
+      this.t1white = (this.dadesTaulell2.jugador1.color == 'white') ? partida2Jugador1 : partida2Jugador2;
+      this.t1black = (this.dadesTaulell2.jugador1.color == 'black') ? partida2Jugador1 : partida2Jugador2;
+    }
+
+  }
+
+
   drag(event: any, casella: any, taulellOrigen: string) {
+
     event.dataTransfer.setData("figuraOrigen", casella.figura);
     event.dataTransfer.setData("filaColumnaOrigen", casella.fila + casella.columna);
     event.dataTransfer.setData("taulellOrigen", taulellOrigen);
@@ -63,12 +121,16 @@ export class JocComponent implements OnInit {
     event.preventDefault();
   }
 
-  drop(event: any, casella: any, taulellDesti: string) {
+  drop(event: any, desti: any, taulellDesti: string) {
 
-    if (taulellDesti == this.taulellJugador) {
+
+    if (taulellDesti == this.jugador.taulell) {
+
+
       let figuraOrigen = event.dataTransfer.getData("figuraOrigen");
+      let colorMogut = figuraOrigen.substring(0, 5);
+      if (this.tornCorrecte(colorMogut, taulellDesti)) {
 
-      if (this.tornCorrecte(figuraOrigen.substring(0,5), taulellDesti)) {
         let tOrigen = event.dataTransfer.getData("taulellOrigen");
         let posicioOrigen = event.dataTransfer.getData("filaColumnaOrigen");
 
@@ -77,28 +139,22 @@ export class JocComponent implements OnInit {
           columna: posicioOrigen.substring(1, 2),
           figura: figuraOrigen
         }
-        let desti = {
-          fila: casella.fila,
-          columna: casella.columna,
-          figura: casella.figura
-        }
 
         if (tOrigen == taulellDesti) {
-          if (!casella.figura) {
+          if (!desti.figura) {
             //casella buida
-            this.moureFigura(tOrigen, figuraOrigen, origen, desti);
-          } else if (casella.figura.substring(0, 5) != figuraOrigen.substring(0, 5)) {
+            this.moureFigura(tOrigen, origen, desti);
+          } else if (desti.figura.substring(0, 5) != figuraOrigen.substring(0, 5)) {
             //casella ocupada
             this.matarFigura(tOrigen, origen, desti);
           }
         }
       }
     }
-
   }
 
 
-  matarFigura(taulell: string, origen: any, desti: any) {
+  matarFigura(taulell: string, origen: any, desti: any, replicacio: boolean = false) {
 
     let files = this.obtenirFiles(taulell)
     files.forEach(fila => {
@@ -118,10 +174,24 @@ export class JocComponent implements OnInit {
 
     let taula = (taulell == "taulell1") ? this.taula1 : this.taula2;
     (desti.figura.substring(0, 5) == "white") ? taula.matarFigura('white', desti.figura) : taula.matarFigura('black', desti.figura);
+
+    if (!replicacio) {
+
+      let dadesMoviment = {
+        jugador: this.jugador.nom,
+        taulell: taulell,
+        sala: this.jugador.sala,
+        origen: origen,
+        desti: desti,
+        accio: "matar"
+      }
+
+      this.socket.mourefigura(dadesMoviment)
+    }
   }
 
 
-  moureFigura(taulell: string, figura: string, origen: any, desti: any) {
+  moureFigura(taulell: string, origen: any, desti: any, replicacio: boolean = false) {
 
     let files = this.obtenirFiles(taulell);
     files.forEach(fila => {
@@ -133,30 +203,42 @@ export class JocComponent implements OnInit {
             casella.figura = '';
           }
           if (casella.columna == desti.columna && casella.fila == desti.fila) {
-            casella.figura = figura;
+            casella.figura = origen.figura;
           }
         });
       }
     })
-  }
 
-  obtenirFiles(taulell: string) {
-    let files = [];
+    if (!replicacio) {
+      let dadesMoviment = {
+        jugador: this.jugador.nom,
+        taulell: taulell,
+        sala: this.jugador.sala,
+        origen: origen,
+        desti: desti,
+        accio: "moure"
+      }
 
-    if (taulell == "taulell1") {
-      this.taula1.canviarTorn();
-      console.log(this.taula1.getTorn())
-      return files = this.taula1.getFiles();
-    } else {
-      this.taula2.canviarTorn();
-      return files = this.taula2.getFiles();
+      this.socket.mourefigura(dadesMoviment)
     }
   }
 
-  tornCorrecte(colorMogut : string , taulell : string){
-      if(taulell == 'taulell1')
-        return (colorMogut == this.taula1.getTorn()) ? true : false ; 
-      else
-      return (colorMogut == this.taula2.getTorn()) ? true : false ; 
+  obtenirFiles(taulell: string) {
+
+    if (taulell == "taulell1") {
+      this.taula1.canviarTorn();
+      return this.taula1.getFiles();
+    } else {
+      this.taula2.canviarTorn();
+      return this.taula2.getFiles();
+    }
+  }
+
+  tornCorrecte(colorMogut: string, taulell: string) {
+    if (taulell == 'taulell1') {
+      return (colorMogut == this.taula1.getTorn() && this.jugador.color == colorMogut) ? true : false;
+    } else {
+      return (colorMogut == this.taula2.getTorn() && this.jugador.color == colorMogut) ? true : false;
+    }
   }
 }

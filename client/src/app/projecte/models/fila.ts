@@ -70,7 +70,6 @@ export class Fila {
                 if(casella.informativa){
                     return;
                 }
-
                 if (casella.fila == figura.fila && casella.columna == figura.columna) {
                     casella.figura = figura.imatge_url;
                 } else if(casella.fila == figura.fila && figura.columna == 'totes'){
