@@ -39,7 +39,7 @@ io.on("connection" , socket=>{
         socket.emit('carregar-user' , jugador);
 
         if(jugadorsOnline % 4 == 0){
-           io.emit('jugar' , 'jugar ');
+           io.to(jugador.sala).emit('jugar' , 'jugar ');
         }
     }
         
